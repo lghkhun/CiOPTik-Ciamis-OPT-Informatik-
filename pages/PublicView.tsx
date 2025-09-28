@@ -150,11 +150,7 @@ const PublicView: React.FC = () => {
   useEffect(() => {
     // Initialize AI Chat Session
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-    const session = ai.chats.create({
-        model: "gemini-2.5-flash",
-    });
-    setChatSession(session);
-    
+
     const dataContext = JSON.stringify(data.map(d => ({
         jenisOpt: d.jenisOpt,
         kabKota: d.kabKota,
@@ -163,7 +159,7 @@ const PublicView: React.FC = () => {
         luasSerangan: d.luasSeranganRingan + d.luasSeranganSedang + d.luasSeranganBerat + d.luasSeranganPuso,
     })), null, 2);
     
-    const systemPrompt = `You are a helpful AI assistant and discussion partner for CiOPTik, a platform for reporting and analyzing agricultural pest (OPT) data in Ciamis Regency, Indonesia. Your role is to engage in a helpful discussion with the user about the provided data and related topics.
+    const systemInstruction = `You are a helpful AI assistant and discussion partner for CiOPTik, a platform for reporting and analyzing agricultural pest (OPT) data in Ciamis Regency, Indonesia. Your role is to engage in a helpful discussion with the user about the provided data and related topics.
 
 Your knowledge base includes:
 1.  **The Provided Data:** The primary context for your analysis is the provided dataset. Use it to answer specific questions about pest attacks.
@@ -180,8 +176,13 @@ Your persona:
 This is the data context for your analysis:
 ${dataContext}`;
 
-    // This message sets the context for the AI. It won't produce a visible response in the UI.
-    session.sendMessage({ message: systemPrompt });
+    const session = ai.chats.create({
+        model: "gemini-2.5-flash",
+        config: {
+            systemInstruction: systemInstruction,
+        },
+    });
+    setChatSession(session);
     
     // This is the first message the user sees.
     setChatHistory([{ role: 'model', text: 'Halo! Saya adalah Analis AI CiOPTik. Mari kita diskusikan data serangan OPT ini. Anda bisa bertanya tentang data, tren, atau bahkan strategi pencegahan dan penanganan OPT di Ciamis.' }]);
