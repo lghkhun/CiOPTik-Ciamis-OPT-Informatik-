@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import { OPTData, FilterState } from '../types';
 import { loadData } from '../services/dataService';
 import { getPublicAiAnalysis } from '../services/geminiService';
-import { ChatBubbleIcon, DownloadIcon, SendIcon } from '../components/Icons';
+import { ChatBubbleIcon, DownloadIcon, SendIcon, SparklesIcon, CloseIcon } from '../components/Icons';
 import Modal from '../components/Modal';
 import { useDebounce } from '../hooks/useDebounce';
 import HighlightText from '../components/HighlightText';
@@ -27,6 +27,82 @@ interface ChatMessage {
 }
 
 const OPT_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#6366F1', '#F97316'];
+
+const FormattedText: React.FC<{ text: string }> = ({ text }) => {
+    if (!text) return null;
+
+    // This function processes inline markdown like **bold** text.
+    const processInlineFormatting = (line: string) => {
+        const parts = line.split(/(\*\*.*?\*\*)/g);
+        return (
+            <>
+                {parts.map((part, index) => {
+                    if (part.startsWith('**') && part.endsWith('**')) {
+                        return <strong key={index}>{part.slice(2, -2)}</strong>;
+                    }
+                    return part;
+                })}
+            </>
+        );
+    };
+
+    const lines = text.split('\n');
+    const elements: React.ReactNode[] = [];
+    let listItems: { content: React.ReactNode; type: 'ul' | 'ol' }[] = [];
+
+    // Helper to render a list when it ends.
+    const flushList = () => {
+        if (listItems.length === 0) return;
+
+        const listKey = `list-${elements.length}`;
+        if (listItems[0].type === 'ul') {
+            elements.push(
+                <ul key={listKey} className="list-disc list-inside pl-4 my-1 space-y-1">
+                    {listItems.map((item, index) => <li key={index}>{item.content}</li>)}
+                </ul>
+            );
+        } else {
+             elements.push(
+                <ol key={listKey} className="list-decimal list-inside pl-4 my-1 space-y-1">
+                    {listItems.map((item, index) => <li key={index}>{item.content}</li>)}
+                </ol>
+            );
+        }
+        listItems = [];
+    };
+
+    lines.forEach((line, index) => {
+        const trimmedLine = line.trim();
+        const ulMatch = trimmedLine.match(/^[-*]\s+(.*)/);
+        const olMatch = trimmedLine.match(/^\d+\.\s+(.*)/);
+
+        if (ulMatch) {
+            // If we encounter a new list type, flush the old one.
+            if (listItems.length > 0 && listItems[0].type !== 'ul') {
+                flushList();
+            }
+            listItems.push({ content: processInlineFormatting(ulMatch[1]), type: 'ul' });
+        } else if (olMatch) {
+            // If we encounter a new list type, flush the old one.
+            if (listItems.length > 0 && listItems[0].type !== 'ol') {
+                flushList();
+            }
+            listItems.push({ content: processInlineFormatting(olMatch[1]), type: 'ol' });
+        } else {
+            // This line is not a list item, so any current list must end.
+            flushList();
+            if (trimmedLine.length > 0) {
+                // Render non-list lines as divs to handle paragraphs correctly.
+                elements.push(<div key={`p-${index}`}>{processInlineFormatting(line)}</div>);
+            }
+        }
+    });
+
+    // After the loop, flush any remaining list items.
+    flushList();
+
+    return <>{elements}</>;
+};
 
 
 const PublicView: React.FC = () => {
@@ -56,7 +132,7 @@ const PublicView: React.FC = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const isDebouncing = searchTerm !== debouncedSearchTerm;
   const [isDownloadModalOpen, setDownloadModalOpen] = useState(false);
-  const [isChatModalOpen, setChatModalOpen] = useState(false);
+  const [isChatWidgetOpen, setChatWidgetOpen] = useState(false);
   
   const [analysis, setAnalysis] = useState<PublicAnalysisResult | null>(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
@@ -87,9 +163,28 @@ const PublicView: React.FC = () => {
         luasSerangan: d.luasSeranganRingan + d.luasSeranganSedang + d.luasSeranganBerat + d.luasSeranganPuso,
     })), null, 2);
     
-    session.sendMessage({ message: `You are an expert data analyst for agricultural pest data in Ciamis Regency, Indonesia. Your role is to answer questions based ONLY on the following dataset. Be helpful and answer in Indonesian. Here is the data context:\n\n${dataContext}` });
+    const systemPrompt = `You are a helpful AI assistant and discussion partner for CiOPTik, a platform for reporting and analyzing agricultural pest (OPT) data in Ciamis Regency, Indonesia. Your role is to engage in a helpful discussion with the user about the provided data and related topics.
+
+Your knowledge base includes:
+1.  **The Provided Data:** The primary context for your analysis is the provided dataset. Use it to answer specific questions about pest attacks.
+2.  **General Agricultural Knowledge:** You can draw upon your general knowledge about Plant Pest Organisms (OPT), their life cycles, common prevention methods, and control strategies.
+3.  **Platform Information:** You know about the CiOPTik platform itself and can explain its purpose.
+
+Your persona:
+*   You are an expert analyst and a helpful discussion partner.
+*   You should answer in Indonesian.
+*   When the user asks about the data, be analytical. Provide insights, reasons, and potential implications.
+*   Feel free to discuss prevention, handling, and planning strategies for OPT management.
+*   If a question is completely unrelated to agriculture, pests, or the CiOPTik platform, politely steer the conversation back to the relevant topics.
+
+This is the data context for your analysis:
+${dataContext}`;
+
+    // This message sets the context for the AI. It won't produce a visible response in the UI.
+    session.sendMessage({ message: systemPrompt });
     
-    setChatHistory([{ role: 'model', text: 'Halo! Saya asisten AI Anda. Silakan ajukan pertanyaan mengenai data serangan OPT yang ditampilkan.' }]);
+    // This is the first message the user sees.
+    setChatHistory([{ role: 'model', text: 'Halo! Saya adalah Analis AI CiOPTik. Mari kita diskusikan data serangan OPT ini. Anda bisa bertanya tentang data, tren, atau bahkan strategi pencegahan dan penanganan OPT di Ciamis.' }]);
   }, [data]);
 
   useEffect(() => {
@@ -315,7 +410,9 @@ const PublicView: React.FC = () => {
                     <div className="mt-8 space-y-8">
                         <div>
                             <h3 className="text-xl font-bold text-gray-800 mb-4">Ringkasan Analisis</h3>
-                            <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{analysis.summary}</p>
+                            <div className="text-gray-600 leading-relaxed">
+                               <FormattedText text={analysis.summary} />
+                            </div>
                         </div>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div className="p-4 border rounded-lg">
@@ -488,53 +585,82 @@ const PublicView: React.FC = () => {
         </div>
       </main>
 
-      <button
-        onClick={() => setChatModalOpen(true)}
-        className="fixed bottom-8 right-8 bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-        aria-label="Open AI Chat Analyzer"
-      >
-          <ChatBubbleIcon className="w-8 h-8" />
-      </button>
-      
-      <Modal isOpen={isChatModalOpen} onClose={() => setChatModalOpen(false)} title="AI Chat Analyzer">
-        <div className="flex flex-col h-[60vh]">
-            <div ref={chatContainerRef} className="flex-grow p-4 space-y-4 overflow-y-auto bg-gray-50 rounded-md">
-                {chatHistory.map((msg, index) => (
-                    <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${msg.role === 'user' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                            <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                        </div>
-                    </div>
-                ))}
-                 {chatLoading && (
-                    <div className="flex justify-start">
-                        <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-xl bg-gray-200 text-gray-800">
-                            <div className="flex items-center space-x-2">
-                                <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse"></div>
-                                <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse delay-75"></div>
-                                <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse delay-150"></div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-            <div className="p-4 border-t">
-                <form onSubmit={handleChatSend} className="flex items-center space-x-2">
-                    <input
-                        type="text"
-                        value={chatInput}
-                        onChange={(e) => setChatInput(e.target.value)}
-                        placeholder="Ketik pertanyaan Anda..."
-                        className="flex-grow w-full px-3 py-2 text-sm border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
-                        disabled={chatLoading}
-                    />
-                    <button type="submit" className="flex-shrink-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 disabled:bg-gray-400" disabled={chatLoading || !chatInput.trim()}>
-                        <SendIcon className="w-5 h-5" />
-                    </button>
-                </form>
-            </div>
+      {!isChatWidgetOpen && (
+          <button
+              onClick={() => setChatWidgetOpen(true)}
+              className="fixed bottom-8 right-8 bg-white rounded-full shadow-lg p-2 pr-4 flex items-center space-x-3 hover:shadow-xl transition-shadow z-40"
+              aria-label="Tanya Analis AI"
+          >
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center border border-green-200 flex-shrink-0">
+                  <SparklesIcon className="w-6 h-6 text-green-600" />
+              </div>
+              <span className="font-semibold text-gray-800 text-sm">Tanya Analis AI</span>
+          </button>
+      )}
+
+      {isChatWidgetOpen && (
+        <div className="fixed bottom-8 right-8 w-full max-w-sm h-[70vh] max-h-[550px] bg-white rounded-xl shadow-2xl flex flex-col z-50 transition-all duration-300">
+            <div className="flex items-center justify-between p-3 border-b bg-white rounded-t-xl">
+              <div className="flex items-center space-x-3">
+                  <div className="relative">
+                      <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                          <SparklesIcon className="w-6 h-6 text-green-600" />
+                      </div>
+                      <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white"></span>
+                  </div>
+                  <div>
+                      <h3 className="font-semibold text-gray-800">Analis AI</h3>
+                      <p className="text-xs text-gray-500">Tersedia untuk membantu</p>
+                  </div>
+              </div>
+              <button 
+                  onClick={() => setChatWidgetOpen(false)} 
+                  className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200"
+                  aria-label="Close chat"
+              >
+                  <CloseIcon className="w-5 h-5" />
+              </button>
+          </div>
+        
+          <div ref={chatContainerRef} className="flex-grow p-4 space-y-4 overflow-y-auto bg-gray-50">
+              {chatHistory.map((msg, index) => (
+                  <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${msg.role === 'user' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                          <div className="text-sm">
+                            <FormattedText text={msg.text} />
+                          </div>
+                      </div>
+                  </div>
+              ))}
+               {chatLoading && (
+                  <div className="flex justify-start">
+                      <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-xl bg-gray-200 text-gray-800">
+                          <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse"></div>
+                              <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse delay-75"></div>
+                              <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse delay-150"></div>
+                          </div>
+                      </div>
+                  </div>
+              )}
+          </div>
+          <div className="p-4 border-t bg-white rounded-b-xl">
+              <form onSubmit={handleChatSend} className="flex items-center space-x-2">
+                  <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      placeholder="Ketik pertanyaan Anda..."
+                      className="flex-grow w-full px-3 py-2 text-sm border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      disabled={chatLoading}
+                  />
+                  <button type="submit" className="flex-shrink-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 disabled:bg-gray-400" disabled={chatLoading || !chatInput.trim()}>
+                      <SendIcon className="w-5 h-5" />
+                  </button>
+              </form>
+          </div>
         </div>
-      </Modal>
+      )}
 
       <Modal isOpen={isDownloadModalOpen} onClose={() => setDownloadModalOpen(false)} title="Form Permintaan Data">
         <form onSubmit={(e) => { e.preventDefault(); handleDownload(); }}>
