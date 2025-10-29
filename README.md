@@ -1,152 +1,127 @@
+# 🌿 CiOPTik - Ciamis OPT Informatik 🌿
 
-# 🌳 CiOPTik: Ciamis OPT Informatik
+Sistem informasi *kece* buat pelaporan, rekapitulasi, dan analisis data serangan hama (OPT) di Kabupaten Ciamis. Biar petani makin jago, data makin akurat!
 
-![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-5-purple?style=for-the-badge&logo=vite)
-![Gemini AI](https://img.shields.io/badge/Gemini%20AI-Google-orange?style=for-the-badge&logo=google-gemini)
+<!-- Jangan lupa ganti GIF ini dengan demo aplikasi kamu yang keren! -->
+![CiOPTik Demo](https://i.ibb.co/bF0Zz1p/peta-ciamis.png)
 
-**CiOPTik** adalah sebuah aplikasi web modern yang berfungsi sebagai Sistem Pelaporan, Rekapitulasi, dan Analisis Data Serangan Organisme Pengganggu Tumbuhan (OPT) di Kabupaten Ciamis. Dibangun dengan React, TypeScript, dan didukung oleh Google Gemini AI, platform ini dirancang untuk memodernisasi alur kerja, meningkatkan akurasi data, dan menyediakan wawasan mendalam bagi para pemangku kepentingan di bidang pertanian.
+## 🤔 Kenalan Dulu, Kuy!
 
----
+**CiOPTik** (Ciamis OPT Informatik) bukan sekadar aplikasi biasa. Ini adalah *super-tool* berbasis web yang ngebantu para petugas pertanian dan pemerintah buat mantau serangan hama secara *real-time*. Dilengkapi visualisasi data yang interaktif dan analisis canggih pake AI Google Gemini, CiOPTik siap bikin Ciamis makin tangguh hadapi hama!
 
-### Daftar Isi
-1. [Latar Belakang & Tujuan](#-latar-belakang--tujuan)
-2. [Tampilan Aplikasi](#-tampilan-aplikasi)
-3. [Fitur Unggulan](#-fitur-unggulan)
-4. [Tumpukan Teknologi](#️-tumpukan-teknologi)
-5. [Arsitektur Proyek](#-arsitektur-proyek)
-6. [Panduan Instalasi Lokal](#-panduan-instalasi-lokal)
-7. [Kredensial Admin Lokal](#-kredensial-admin-lokal)
-8. [Berkontribusi](#-berkontribusi)
-9. [Lisensi](#-lisensi)
+## ✨ Fitur-Fitur Keren
 
----
+-   📊 **Dashboard Publik Ciamik**: Liat data serangan hama yang udah valid dalam bentuk tabel dan grafik interaktif. Gampang dibaca, gampang dipahami!
+-   🤖 **Analis AI Pribadi**: Bingung baca data? Tanya aja langsung ke Analis AI Gemini! Dapatkan ringkasan dan *insight* tersembunyi dari data yang ada.
+-   🔒 **Dashboard Admin Aman**: Operator bisa ngelola data laporan (tambah, edit, hapus) dan setujui data mana yang boleh tayang buat publik.
+-   ✍️ **Manajemen Konten Fleksibel**: Admin bisa update gambar dan info penting lainnya di halaman informasi hama & penyakit.
+-   💌 **Kotak Masukan**: Pengguna publik bisa kirim *feedback*, saran, atau pertanyaan langsung ke admin.
+-   🔑 **Login Aman Jaya**: Sistem login khusus buat operator/admin pake Supabase Auth. Data kamu aman!
+-   ⬇️ **Download Data Sekali Klik**: Butuh data buat laporan? Download aja data yang udah difilter dalam format Excel (.xlsx) atau CSV.
 
-## 🎯 Latar Belakang & Tujuan
+## 🚀 Tech Stack Canggih
 
-Pengelolaan data serangan OPT di Kabupaten Ciamis secara tradisional seringkali menghadapi tantangan seperti proses pelaporan yang lambat, rekapitulasi manual yang rentan kesalahan, dan analisis data yang terbatas. Hal ini dapat menghambat pengambilan keputusan yang cepat dan tepat dalam strategi pengendalian OPT.
-
-**CiOPTik hadir untuk menyelesaikan masalah ini dengan tujuan:**
--   **Digitalisasi & Sentralisasi**: Menciptakan satu sumber data terpusat yang mudah diakses dan dikelola.
--   **Efisiensi**: Mempercepat proses pelaporan dan rekapitulasi data dari berbagai kecamatan.
--   **Akurasi**: Mengurangi human error melalui input terstruktur dan validasi data.
--   **Wawasan Mendalam**: Menyediakan alat analisis canggih berbasis AI untuk mengidentifikasi tren, pola serangan, dan memberikan rekomendasi strategis.
--   **Transparansi**: Menyajikan data yang telah disetujui kepada publik untuk meningkatkan kesadaran dan partisipasi.
+-   **Frontend**: React, TypeScript, Tailwind CSS
+-   **Backend & Database**: Supabase (PostgreSQL, Auth, Storage)
+-   **AI (Otaknya)**: Google Gemini API
+-   **Grafik**: Recharts
 
 ---
 
-## 🖥️ Tampilan Aplikasi
+## 🛠️ Tutorial Instalasi Gampang Banget! (Self-Hosting)
 
-Berikut adalah tampilan antarmuka utama dari aplikasi CiOPTik, menampilkan dasbor publik dengan visualisasi data interaktif.
+Mau install CiOPTik di server atau hosting-mu sendiri? Gampang banget! Ikuti langkah-langkah di bawah ini, dijamin anti pusing.
 
-** 
-*(Catatan: Ganti dengan URL screenshot aplikasi Anda)*
+### 1. Siapin Amunisi Dulu, Bro!
 
----
+Sebelum mulai, pastiin kamu udah punya ini:
 
-## ✨ Fitur Unggulan
+1.  **Akun Supabase**: Buat akun gratis di [supabase.com](https://supabase.com/). Ini bakal jadi backend dan database kita.
+2.  **API Key Google Gemini**: Dapetin API Key kamu dari [Google AI Studio](https://aistudio.google.com/).
+3.  **Git**: Udah install Git di komputermu. Kalau belum, download dari [git-scm.com](https://git-scm.com/).
 
-Platform ini dirancang dengan dua peran utama: **Pengguna Publik** dan **Operator Admin**.
+### 2. Langkah-Langkah Instalasi
 
-### Untuk Pengguna Publik:
--   **Dasbor Ringkasan Dinamis**: Halaman utama secara otomatis menyajikan ringkasan data terkini dari periode laporan terbaru, menampilkan metrik kunci seperti total serangan, OPT paling dominan, dan jumlah kecamatan terdampak.
--   **Visualisasi Interaktif**: Data disajikan dalam bentuk tabel hierarkis yang detail serta grafik batang dan garis. Pengguna dapat mengklik elemen grafik untuk memfilter data di tabel secara *real-time*.
--   **Filter Data Cerdas (Cascading Filters)**: Sistem filter bertingkat di mana pilihan pada satu filter (misal: Tahun) akan secara otomatis menyesuaikan opsi yang tersedia pada filter lainnya (misal: Periode), membuat eksplorasi data lebih cepat dan intuitif.
--   **Analisis AI Cepat**: Menghasilkan ringkasan teks dan grafik secara otomatis dari data yang sedang ditampilkan dengan satu klik, didukung oleh Gemini AI.
--   **AI Chat Analyzer**: Sebuah *chat assistant* di dalam modal yang memungkinkan pengguna untuk bertanya tentang data yang ditampilkan menggunakan bahasa natural (Bahasa Indonesia).
--   **Pusat Informasi OPT**: Halaman edukatif yang berisi materi mengenai jenis-jenis OPT umum beserta visualisasi siklus hidupnya untuk membantu pemahaman.
+#### **Langkah 1: Clone Repositori Ini**
 
-### Untuk Operator Admin:
--   **Manajemen Data (CRUD)**: Dasbor khusus untuk membuat, membaca, memperbarui, dan menghapus data laporan serangan OPT.
--   **Sistem Persetujuan Data**: Alur kerja untuk meninjau dan menyetujui data yang masuk sebelum dipublikasikan ke dasbor publik, memastikan validitas data.
--   **Upload Massal via CSV**: Fitur untuk mengimpor banyak data sekaligus dari file CSV, mempercepat proses entri data secara signifikan.
--   **Input Data Tervalidasi**: Formulir input dilengkapi dengan dropdown dan validasi numerik untuk meminimalkan kesalahan input dan menjaga konsistensi data.
+Buka terminal atau command prompt, terus jalanin perintah ini:
 
----
-
-## 🛠️ Tumpukan Teknologi
-
--   **Frontend**: React `19`, TypeScript
--   **Styling**: Tailwind CSS
--   **AI & Machine Learning**: Google Gemini AI API (`@google/genai`)
--   **Routing**: React Router `v6`
--   **Visualisasi Data**: Recharts
--   **Bundler**: Vite
-
----
-
-## 🏛️ Arsitektur Proyek
-
-Struktur direktori proyek dirancang agar modular dan mudah dikelola:
-
-```
-/src
-├── /components   # Komponen UI yang dapat digunakan kembali (Header, Modal, Ikon, dll.)
-├── /contexts     # Global state management (contoh: AuthContext)
-├── /hooks        # Custom React hooks (contoh: useDebounce, useSortableData)
-├── /pages        # Komponen utama untuk setiap halaman/rute aplikasi
-├── /services     # Logika bisnis, interaksi dengan API & localStorage (dataService, geminiService)
-├── App.tsx       # Komponen root aplikasi dan konfigurasi routing
-├── index.tsx     # Titik masuk utama aplikasi React
-└── types.ts      # Definisi tipe TypeScript global (interface)
+```bash
+git clone https://github.com/USERNAME/NAMA-REPO-KAMU.git
+cd NAMA-REPO-KAMU
 ```
 
+*(Jangan lupa ganti `USERNAME` dan `NAMA-REPO-KAMU` ya!)*
+
+#### **Langkah 2: Setup Supabase (Backend Magic ✨)**
+
+Ini bagian paling penting, jadi ikutin pelan-pelan ya!
+
+1.  **Bikin Proyek Baru**: Login ke Supabase, terus bikin proyek baru.
+2.  **Ambil Kunci API**:
+    *   Masuk ke proyekmu, klik ikon gerigi (Settings) > **API**.
+    *   Kamu butuh 2 hal dari sini: **Project URL** dan **Project API Keys** (pake yang `anon` `public`). Catat dulu di tempat aman.
+3.  **Bikin Bucket Penyimpanan**:
+    *   Di menu kiri, klik ikon Storage.
+    *   Klik **"Create a new bucket"**.
+    *   Kasih nama bucket: `opt-images` (harus persis ini ya!).
+    *   Pastiin bucket-nya **Public**.
+4.  **Jalanin Skrip SQL Sakti**:
+    *   Di menu kiri, klik **SQL Editor**.
+    *   Buka file `supasql.md` di proyek yang udah kamu clone.
+    *   **Copy SEMUA isinya**, terus **paste** ke SQL Editor di Supabase.
+    *   Klik tombol **"RUN"**. Selesai! Database, tabel, dan data awal kamu udah siap.
+
+> **PENTING!** Kenapa langkah ke-4 ini krusial? Skrip ini nggak cuma bikin tabel, tapi juga ngatur **Row Level Security (RLS)**. Tanpa RLS yang bener, aplikasimu nggak akan bisa baca data dari database, alias bakal kosong melompong.
+
+#### **Langkah 3: Konfigurasi Kunci Rahasia 🤫**
+
+Sekarang, kita sambungin aplikasi dengan Supabase dan Gemini. Cuma ada 2 file yang perlu kamu edit.
+
+1.  **Koneksi Supabase**:
+    *   Buka file `services/supabaseClient.ts`.
+    *   Ganti nilai `supabaseUrl` dan `supabaseAnonKey` dengan kredensial dari proyek Supabase-mu.
+
+2.  **Koneksi Gemini AI**:
+    *   Buka file `services/geminiClient.ts`.
+    *   Ganti nilai `GEMINI_API_KEY` dengan API Key dari Google AI Studio milikmu.
+
+> **Tips Keamanan**: Jangan pernah upload file-file ini dengan kunci rahasia ke repository publik seperti GitHub! Buat file `.gitignore` dan tambahkan baris `services/supabaseClient.ts` dan `services/geminiClient.ts` di dalamnya untuk mencegahnya ter-upload.
+
+#### **Langkah 4: Bikin Akun Admin Pertama**
+
+1.  Di dashboard Supabase, masuk ke **Authentication** > **Users**.
+2.  Klik **"Invite user"** dan masukin alamat emailmu.
+3.  Buka email undangan yang masuk, klik link-nya, dan atur password buat akun adminmu.
+
+#### **Langkah 5: Upload ke Hosting & Go Live! 🚀**
+
+Karena ini aplikasi statis (HTML, CSS, JS), kamu bisa hosting di mana aja dengan gampang!
+
+1.  **Pilih Hosting**: Kamu bisa pake [Netlify](https://www.netlify.com/), [Vercel](https://vercel.com/), [Firebase Hosting](https://firebase.google.com/docs/hosting), atau bahkan [GitHub Pages](https://pages.github.com/).
+2.  **Upload File**:
+    *   Cukup upload semua file dari folder proyekmu ke penyedia hosting pilihanmu.
+    *   Banyak penyedia (kayak Netlify/Vercel) punya fitur drag-and-drop atau bisa langsung dihubungkan ke repositori Git-mu. Gampang banget!
+
+**Selesai!** Aplikasi CiOPTik-mu sekarang udah online dan siap digunakan!
+
+## 🤯 Sering Ketemu Masalah? (Troubleshooting)
+
+-   **"Kok datanya nggak muncul di halaman publik/admin?"**
+    *   Ini 99% masalah **Row Level Security (RLS)**. Solusinya: Pastiin kamu udah jalanin **SEMUA** skrip dari `supasql.md` tanpa error. Cek lagi kebijakan (Policies) di setiap tabel di dashboard Supabase-mu.
+-   **"Gagal upload gambar!"**
+    *   Cek lagi nama bucket di Supabase Storage, harus `opt-images`.
+    *   Pastikan juga bucket-nya udah di-set ke **Public**.
+-   **"Error terkait API Key Supabase atau Gemini"**
+    *   Pastikan API Key yang kamu masukkan di file `supabaseClient.ts` dan `geminiClient.ts` sudah benar, tanpa spasi ekstra.
+
+## 🤝 Mau Ikutan Kontribusi?
+
+Tentu boleh! Kalau kamu punya ide buat bikin CiOPTik makin keren, jangan ragu buat *fork* repository ini, buat perubahanmu, dan kirim *pull request*. Semua kontribusi sangat kami hargai!
+
+## 📜 Lisensi
+
+Proyek ini dilisensikan di bawah Lisensi MIT. Bebas kamu gunakan dan modifikasi.
+
 ---
-
-## 🚀 Panduan Instalasi Lokal
-
-Untuk menjalankan proyek ini di lingkungan lokal, ikuti langkah-langkah berikut:
-
-### Prasyarat
--   Node.js (versi 18 atau lebih tinggi direkomendasikan)
--   NPM atau Yarn
--   API Key dari **Google AI Studio (Gemini)**
-
-### Langkah-langkah Instalasi
-
-1.  **Clone Repositori**
-    ```bash
-    git clone https://github.com/username/cioptik.git
-    cd cioptik
-    ```
-
-2.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
-
-3.  **Konfigurasi Environment Variable**
-    -   Buat sebuah file baru di root direktori proyek dengan nama `.env`.
-    -   Tambahkan API Key Gemini Anda ke dalam file `.env` seperti berikut. Ganti `YOUR_GEMINI_API_KEY` dengan kunci API Anda yang sebenarnya.
-    ```
-    VITE_GEMINI_API_KEY=YOUR_GEMINI_API_KEY
-    ```
-    > **Penting**: Dalam proyek berbasis Vite, nama variabel harus diawali dengan `VITE_` agar dapat diakses di kode frontend.
-
-4.  **Menjalankan Aplikasi**
-    Setelah instalasi dan konfigurasi selesai, jalankan server pengembangan lokal:
-    ```bash
-    npm run dev
-    ```
-    Aplikasi akan berjalan dan dapat diakses di `http://localhost:5173` (atau port lain yang tersedia).
-
----
-
-## 🔑 Kredensial Admin Lokal
-
-> Untuk mengakses dasbor admin pada lingkungan pengembangan lokal, gunakan kredensial berikut pada halaman login:
-> -   **Username**: `operator_ciamis`
-> -   **Password**: `password123`
-
----
-
-## 🤝 Berkontribusi
-
-Kami menyambut kontribusi untuk meningkatkan CiOPTik. Jika Anda menemukan bug atau memiliki ide untuk fitur baru, silakan buka *Issue* di repositori GitHub. Untuk kontribusi kode, silakan buat *Pull Request* dengan deskripsi yang jelas mengenai perubahan yang Anda buat.
-
----
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah **MIT License**. Lihat file `LICENSE` untuk detail lebih lanjut.
+Dibuat dengan ❤️ untuk pertanian Ciamis yang lebih maju.

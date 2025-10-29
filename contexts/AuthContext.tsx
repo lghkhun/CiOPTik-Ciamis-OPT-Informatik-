@@ -1,34 +1,68 @@
-
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { supabase } from '../services/supabaseClient';
+// FIX: In some older versions of @supabase/supabase-js v2, Session and User types were not exported correctly.
+// Importing them from the underlying @supabase/auth-js package is a more robust solution.
+import type { Session, User } from '@supabase/auth-js';
 
 interface AuthContextType {
+  session: Session | null;
+  user: User | null;
   isAuthenticated: boolean;
-  login: (user: string, pass: string) => boolean;
-  logout: () => void;
+  loading: boolean;
+  login: (email: string, pass: string) => Promise<{ success: boolean; error: string | null }>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (user: string, pass: string): boolean => {
-    // In a real app, you'd verify credentials against a server.
-    // For this demo, we'll use a simple hardcoded check.
-    if (user === 'operator_ciamis' && pass === 'password123') {
-      setIsAuthenticated(true);
-      return true;
+  useEffect(() => {
+    // FIX: Relying solely on onAuthStateChange is a more robust pattern.
+    // It's called once on listener attachment with the initial session, and then on any auth state change.
+    // This removes the need for a separate getSession() call and avoids potential race conditions.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+
+  const login = async (email: string, pass: string) => {
+    // FIX: The parameter is `pass`, but Supabase expects a `password` property.
+    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    if (error) {
+      return { success: false, error: error.message };
     }
-    return false;
+    return { success: true, error: null };
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
+  const logout = async () => {
+    await supabase.auth.signOut();
+  };
+  
+  const value = {
+    session,
+    user,
+    isAuthenticated: !!user,
+    loading,
+    login,
+    logout,
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-      {children}
+    <AuthContext.Provider value={value}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

@@ -2,18 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { getAiAnalysis } from '../services/geminiService';
 import { OPTData } from '../types';
-import { loadData } from '../services/dataService';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+// FIX: Changed import from 'loadData' to 'getOptData' as 'loadData' is not exported from dataService.
+import { getOptData } from '../services/dataService';
 import { ThumbUpIcon, ThumbDownIcon } from '../components/Icons';
 import CustomTooltip from '../components/CustomTooltip';
 
 interface AnalysisResult {
     summary: string;
-    barChartData: { name: string; luasSerangan: number }[];
-    pieChartData: { name: string; value: number }[];
 }
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#ff4d4d'];
 
 const AiAnalysis: React.FC = () => {
   const [data, setData] = useState<OPTData[]>([]);
@@ -24,7 +20,17 @@ const AiAnalysis: React.FC = () => {
   const [feedback, setFeedback] = useState<'positive' | 'negative' | null>(null);
 
   useEffect(() => {
-    setData(loadData());
+    // FIX: Replaced synchronous `loadData` with asynchronous `getOptData` to fetch data.
+    const fetchData = async () => {
+      try {
+        const loadedData = await getOptData();
+        setData(loadedData);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        setError("Gagal memuat data. Silakan coba lagi nanti.");
+      }
+    };
+    fetchData();
   }, []);
 
   const handleGenerateAnalysis = async () => {
@@ -122,39 +128,6 @@ const AiAnalysis: React.FC = () => {
                     </button>
                 </div>
               </div>
-            </div>
-            
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white p-6 rounded-xl shadow-lg">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Total Serangan per Komoditas</h3>
-                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={analysis.barChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip 
-                                content={<CustomTooltip />}
-                                cursor={{fill: 'rgba(16, 185, 129, 0.1)'}}
-                            />
-                            <Legend />
-                            <Bar dataKey="luasSerangan" fill="#10B981" name="Luas Serangan (Ha)" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-                 <div className="bg-white p-6 rounded-xl shadow-lg">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Distribusi Serangan per Jenis OPT</h3>
-                     <ResponsiveContainer width="100%" height={300}>
-                        <PieChart>
-                            {/* FIX: Explicitly convert 'percent' to a number to prevent TS2362 error during arithmetic operations. */}
-                            <Pie data={analysis.pieChartData} cx="50%" cy="50%" labelLine={false} outerRadius={110} fill="#8884d8" dataKey="value" nameKey="name" label={({ name, percent }) => `${name} (${(Number(percent || 0) * 100).toFixed(0)}%)`}>
-                                {analysis.pieChartData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
-                            </Pie>
-                            <Tooltip content={<CustomTooltip />} />
-                            <Legend />
-                        </PieChart>
-                    </ResponsiveContainer>
-                </div>
             </div>
           </div>
         )}

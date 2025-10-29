@@ -7,6 +7,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import LoginPage from './pages/LoginPage';
 import InformasiPage from './pages/InformasiPage'; // Import halaman baru
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const App: React.FC = () => {
   return (
@@ -14,14 +15,23 @@ const App: React.FC = () => {
       <HashRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/data" element={<PublicView />} />
+          <Route 
+            path="/data" 
+            element={
+              <ErrorBoundary>
+                <PublicView />
+              </ErrorBoundary>
+            } 
+          />
           <Route path="/informasi" element={<InformasiPage />} /> {/* Tambahkan rute baru */}
           <Route path="/login" element={<LoginPage />} />
           <Route 
             path="/admin" 
             element={
               <ProtectedRoute>
-                <AdminDashboard />
+                <ErrorBoundary>
+                  <AdminDashboard />
+                </ErrorBoundary>
               </ProtectedRoute>
             } 
           />

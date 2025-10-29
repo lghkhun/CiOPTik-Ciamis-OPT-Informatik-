@@ -15,9 +15,9 @@ const Header: React.FC = () => {
     };
 
     const navLinks = [
-        { path: '/', label: 'Home' },
-        { path: '/data', label: 'Data Publik' },
+        { path: '/', label: 'Beranda' },
         { path: '/informasi', label: 'Informasi' },
+        { path: '/data', label: 'Data Publik' },
         { path: '/admin', label: 'Admin Dashboard', auth: true },
     ];
     
